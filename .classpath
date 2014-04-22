@@ -21,5 +21,8 @@
 	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/slf4j-log4j12-1.5.6.jar"/>
 	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/jsp-api.jar"/>
 	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/vandervidi/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/vandervidi/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/vandervidi/Downloads/google-gson-2.2.4-release/google-gson-2.2.4/gson-2.2.4-sources.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

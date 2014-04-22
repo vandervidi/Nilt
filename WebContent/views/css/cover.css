@@ -25,16 +25,13 @@ a:hover {
  */
 
 html,
+
 body {
- 
-  background-color:#303030;
-}
-body {
+  background-size:cover;
   color: #fff;
   text-align: center;
   text-shadow: 0 1px 3px rgba(0,0,0,.5);
 }
-
 
 
 /* Extra markup and styles for table-esque vertical and horizontal centering */
@@ -54,9 +51,7 @@ body {
 }
 
 /* Padding for spacing */
-.inner {
- 
-}
+
 
 
 /*
@@ -109,15 +104,21 @@ body {
  */
 
 .cover {
- 
-  background-color: black;
+background-image: url(../../views/images/transPixel.png);
 }
+
 .cover .btn-lg {
   padding: 10px 20px;
   font-weight: bold;
 }
 
+.lineupHeader {
+background-image: url(../../views/images/transPixel.png);
+}
 
+.lineupContent {
+background-image: url(../../views/images/transPixelGray.png);
+}
 /*
  * Footer
  */

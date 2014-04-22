@@ -30,13 +30,14 @@ public class controller extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String str = request.getPathInfo();
-		int trackNumber=0;
+		int indicator=0;
 		String[] parts; 
 		if (str.equals("/nilt")){
-//This part will isolate the youtube links and pass the links in a list oblject to index.jsp
+			//This part will isolate the youtube links and pass the links in a list oblject to index.jsp
 		    String urlText = "http://facebook-rss.herokuapp.com/rss/534674899917897";
 		    BufferedReader in = null;
 		    List<String> youtubeLinks = new ArrayList<>();
+		    List<String> publisherPic = new ArrayList<>();
 		    try {
 		      URL url = new URL(urlText);
 		      in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -47,6 +48,13 @@ public class controller extends HttpServlet {
 		    	  if (inputLine.contains(" <title><![CDATA[http") && !inputLine.contains("soundcloud"))
 		    	  {
 		    		  youtubeLinks.add(inputLine);
+		    		  indicator=1;
+		    	  }
+		    	  if (inputLine.contains("          ><img src=\"http://graph.facebook.com/") && (indicator==1))
+		    	  {
+		    		  parts = inputLine.split("\"");
+		    		  publisherPic.add(parts[1]);
+		    		  indicator=0;
 		    	  }
 		      }
 		    } catch (Exception e) {
@@ -66,70 +74,83 @@ public class controller extends HttpServlet {
 		    for (int i=0 ; i<youtubeLinks.size() ; i++)
 		    {
 		    	String strTemp=youtubeLinks.get(i).replaceAll("]]></title>", "");
-		    	youtubeLinks.set( i , strTemp);
-		    	strTemp=youtubeLinks.get(i).replace("    <title><![CDATA[", "");
+		    	strTemp=strTemp.replace("    <title><![CDATA[", "");
 		    	//<--start--This part removes any additional parameters like &hd and so...
 		    	parts = strTemp.split("&");
 				strTemp=parts[0];
 				parts = strTemp.split("#");
 				strTemp=parts[0];
+				parts = strTemp.split("<");
+				strTemp=parts[0];
 				strTemp=strTemp.trim();
 				//end-->
-		    	youtubeLinks.set( i , strTemp);
+		    	
 		    	//if the link is HTTP link and the string contains the substring "&list=" - remove it (its part of a playlist)
-		    	if (youtubeLinks.get(i).contains("&list=") && youtubeLinks.get(i).contains("http://www.youtube.com/watch?v="))
+		    	if (strTemp.contains("&list=") && strTemp.contains("http://www.youtube.com/watch?v="))
 		    	{
 		    		
-		    		strTemp=youtubeLinks.get(i).replace("http://www.youtube.com/watch?v=", "");
+		    		strTemp=strTemp.replace("http://www.youtube.com/watch?v=", "");
 		    		parts = strTemp.split("&");
 		    		strTemp=parts[0];
 		    		strTemp=strTemp.trim();
+		    		if (strTemp.length()==11){
 			    	youtubeLinks.set( i , strTemp);
+		    		}
 		    	}
 		    	//if the link is HTTPS link and the string contains the substring "&list=" - remove it (its part of a playlist)
-		    	else if (youtubeLinks.get(i).contains("&list=") && youtubeLinks.get(i).contains("https://www.youtube.com/watch?v="))
+		    	else if (strTemp.contains("&list=") && strTemp.contains("https://www.youtube.com/watch?v="))
 		    	{
 
-		    		strTemp=youtubeLinks.get(i).replace("https://www.youtube.com/watch?v=", "");
+		    		strTemp=strTemp.replace("https://www.youtube.com/watch?v=", "");
 		    		parts = strTemp.split("&");
 		    		strTemp=parts[0];
 		    		strTemp=strTemp.trim();
-		    		System.out.println(strTemp);
-			    	youtubeLinks.set( i , strTemp);
+		    		if (strTemp.length()==11){
+				    	youtubeLinks.set( i , strTemp);
+			    		}
 			    	
 		    	}
 		    	//if the string contains the substring "HTTPS://www.youtube.com/watch?v=" - remove it. (secured connection)
-		    	else if (youtubeLinks.get(i).contains("https://www.youtube.com/watch?v="))
+		    	else if (strTemp.contains("https://www.youtube.com/watch?v="))
 		    	{
-		    		strTemp=youtubeLinks.get(i).replace("https://www.youtube.com/watch?v=", "");
-			    	youtubeLinks.set( i , strTemp);
+		    		strTemp=strTemp.replace("https://www.youtube.com/watch?v=", "");
+		    		if (strTemp.length()==11){
+				    	youtubeLinks.set( i , strTemp);
+			    		}
 		    	}
 		    	//if the string contains the substring "HTTP://www.youtube.com/watch?v=" - remove it
-		    	else if (youtubeLinks.get(i).contains("http://www.youtube.com/watch?v="))
+		    	else if (strTemp.contains("http://www.youtube.com/watch?v="))
 		    	{
-		    		strTemp=youtubeLinks.get(i).replace("http://www.youtube.com/watch?v=", "");
-			    	youtubeLinks.set( i , strTemp);
+		    		strTemp=strTemp.replace("http://www.youtube.com/watch?v=", "");
+		    		if (strTemp.length()==11){
+				    	youtubeLinks.set( i , strTemp);
+			    		}
 		    	}
 		    	//if the string contains the substring "HTTP://youtu.be/" - remove it. 
-		    	else if (youtubeLinks.get(i).contains("http://youtu.be/"))
+		    	else if (strTemp.contains("http://youtu.be/"))
 		    	{
-		    		strTemp=youtubeLinks.get(i).replace("http://youtu.be/", "");
-			    	youtubeLinks.set( i , strTemp);
+		    		strTemp=strTemp.replace("http://youtu.be/", "");
+		    		if (strTemp.length()==11){
+				    	youtubeLinks.set( i , strTemp);
+			    		}
 		    	}
 		    	//if the string contains the substring "HTTPS://youtu.be/" - remove it. (secured connection)
-		    	else if (youtubeLinks.get(i).contains("https://youtu.be/"))
+		    	else if (strTemp.contains("https://youtu.be/"))
 		    	{
-		    		strTemp=youtubeLinks.get(i).replace("https://youtu.be/", "");
-			    	youtubeLinks.set( i , strTemp);
+		    		strTemp=strTemp.replace("https://youtu.be/", "");
+		    		if (strTemp.length()==11){
+				    	youtubeLinks.set( i , strTemp);
+			    		}
 		    	}
   	
 		    }
 		    
 //This part will pass the list of strings and the next track number to the index.jsp
+		    
 		    request.setAttribute("youtubeLinksList", youtubeLinks);
-		    request.setAttribute("trackNum", trackNumber);
+		    request.setAttribute("publisherPic", publisherPic);
 			RequestDispatcher dispatcher = getServletContext()
-					.getRequestDispatcher("/views/nextVersionIndex.jsp");
+					.getRequestDispatcher("/views/index.jsp");
 			dispatcher.forward(request, response);	
 	    }
 

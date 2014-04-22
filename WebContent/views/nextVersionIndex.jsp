@@ -73,7 +73,7 @@ catch (NullPointerException e1)
           width: '640',
           videoId: trackId[i],
           playerVars: {
-              'iv_load_policy': 3,'enablejsapi ':1,'autohide':1},
+              'iv_load_policy': 3,'autohide':1},
           events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -83,7 +83,7 @@ catch (NullPointerException e1)
 
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
-        event.target.playVideo();
+        //event.target.playVideo();
         var imageUrl="http://i1.ytimg.com/vi/"+trackId[i]+"/hqdefault.jpg";
         document.body.style.backgroundImage="url("+imageUrl+")";
        
@@ -166,6 +166,14 @@ catch (NullPointerException e1)
     <!-- AddThis Pro BEGIN -->
 	<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53230e4114f8a5ea"></script>
 	<!-- AddThis Pro END -->
+	
+	<div id="transBackground">
+	<br><br>
+	<!-- live stramin block
+	 <a href="../views/liveStream.html" >
+     <div style="text-decoration: none;text-align:center;background-image: url(../views/images/transPixel.png);padding-top: 3px;padding-bottom: 3px;margin: auto;margin-bottom:5px;font-weight:bold;width:100%;">
+     <h2>Live Stream - Ultra Miami festival - Day 3</h2></div></a>
+     -->
      <div class="site-wrapper">
       <div class="site-wrapper-inner">
         <div class="cover-container">
@@ -188,21 +196,17 @@ catch (NullPointerException e1)
                                 </div>                               
                         </div>    
                 </div>
-		  <br><br><br> <br>
-          <div class="inner cover">
-          
-          <!-- Live Streaming block
-          <a href="../views/liveStream.html" style="text-decoration: none;">
-          <button type="button" class="btn btn-orange btn-lg btn-block" style="margin-bottom:5px;text-align:center;">LIVE:Future Music Festival Asia</button></a>
-          -->
+   
+		  <br>
+          <div class="cover">
           <div class="alert alert-info" style="margin-bottom:2px;">
           THE LATEST: Now playing video <span class="currTrackPlaying"> 1 </span> / <%out.print(youtubeLinks.size()); %>
 			</div>
 	
-		    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
 		      <div class="video-container">
-		      	<video id="player">
-		      	</video>
+		      	<div id="player">
+		      	
+		      	</div>
 		     </div>
 			<p>
 			    <button type="button" class="btn btn-success btn-lg btn-block" onClick="loadNextVideo()" id="nextTrack" style="margin-top:1px;">
@@ -312,6 +316,7 @@ catch (NullPointerException e1)
       </div>
     </div>
   </div>
+</div>
 </div>
 <!-- Modal end -->
     <!-- Bootstrap core JavaScript
