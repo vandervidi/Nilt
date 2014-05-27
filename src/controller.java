@@ -14,20 +14,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * Servlet implementation class controller
- */
 @WebServlet("/controller/*")
 public class controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-    /**
-     * Default constructor. 
-     */
-    public controller() {
-        // TODO Auto-generated constructor stub
-    }
-
+    public controller() {}
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String str = request.getPathInfo();
 		int indicator=0;
@@ -73,95 +63,38 @@ public class controller extends HttpServlet {
 //strings that contain only YOUTUBE links.
 		    for (int i=0 ; i<youtubeLinks.size() ; i++)
 		    {
-		    	String strTemp=youtubeLinks.get(i).replaceAll("]]></title>", "");
-		    	strTemp=strTemp.replace("    <title><![CDATA[", "");
-		    	//<--start--This part removes any additional parameters like &hd and so...
-		    	parts = strTemp.split("&");
-				strTemp=parts[0];
-				parts = strTemp.split("#");
-				strTemp=parts[0];
-				parts = strTemp.split("<");
-				strTemp=parts[0];
-				strTemp=strTemp.trim();
-				//end-->
-		    	
-		    	//if the link is HTTP link and the string contains the substring "&list=" - remove it (its part of a playlist)
-		    	if (strTemp.contains("&list=") && strTemp.contains("http://www.youtube.com/watch?v="))
-		    	{
-		    		
-		    		strTemp=strTemp.replace("http://www.youtube.com/watch?v=", "");
-		    		parts = strTemp.split("&");
-		    		strTemp=parts[0];
-		    		strTemp=strTemp.trim();
-		    		if (strTemp.length()==11){
-			    	youtubeLinks.set( i , strTemp);
-		    		}
+		    	String strTemp=youtubeLinks.get(i);
+		    	if (strTemp.contains("<title><![CDATA[")){
+					
+					//removing special symbols from the URL, (=,&,#,?) and isolating uniqe video id.
+					
+					if(strTemp.contains("youtu.be/")){
+						parts = strTemp.split("be/");
+						strTemp = parts[1];
+					}
+					if(strTemp.contains("youtube")){
+						parts = strTemp.split("v=");
+						strTemp = parts[1];
+					}
+					if (strTemp.length()>11){
+						strTemp = strTemp.substring(0,11);
+					}
+					youtubeLinks.set( i , strTemp);   	
 		    	}
-		    	//if the link is HTTPS link and the string contains the substring "&list=" - remove it (its part of a playlist)
-		    	else if (strTemp.contains("&list=") && strTemp.contains("https://www.youtube.com/watch?v="))
-		    	{
-
-		    		strTemp=strTemp.replace("https://www.youtube.com/watch?v=", "");
-		    		parts = strTemp.split("&");
-		    		strTemp=parts[0];
-		    		strTemp=strTemp.trim();
-		    		if (strTemp.length()==11){
-				    	youtubeLinks.set( i , strTemp);
-			    		}
-			    	
-		    	}
-		    	//if the string contains the substring "HTTPS://www.youtube.com/watch?v=" - remove it. (secured connection)
-		    	else if (strTemp.contains("https://www.youtube.com/watch?v="))
-		    	{
-		    		strTemp=strTemp.replace("https://www.youtube.com/watch?v=", "");
-		    		if (strTemp.length()==11){
-				    	youtubeLinks.set( i , strTemp);
-			    		}
-		    	}
-		    	//if the string contains the substring "HTTP://www.youtube.com/watch?v=" - remove it
-		    	else if (strTemp.contains("http://www.youtube.com/watch?v="))
-		    	{
-		    		strTemp=strTemp.replace("http://www.youtube.com/watch?v=", "");
-		    		if (strTemp.length()==11){
-				    	youtubeLinks.set( i , strTemp);
-			    		}
-		    	}
-		    	//if the string contains the substring "HTTP://youtu.be/" - remove it. 
-		    	else if (strTemp.contains("http://youtu.be/"))
-		    	{
-		    		strTemp=strTemp.replace("http://youtu.be/", "");
-		    		if (strTemp.length()==11){
-				    	youtubeLinks.set( i , strTemp);
-			    		}
-		    	}
-		    	//if the string contains the substring "HTTPS://youtu.be/" - remove it. (secured connection)
-		    	else if (strTemp.contains("https://youtu.be/"))
-		    	{
-		    		strTemp=strTemp.replace("https://youtu.be/", "");
-		    		if (strTemp.length()==11){
-				    	youtubeLinks.set( i , strTemp);
-			    		}
-		    	}
-  	
-		    }
-		    
-//This part will pass the list of strings and the next track number to the index.jsp
-		    
+		    }    
+//This part will pass the list of strings and the next track number to the index.jsp		    
 		    request.setAttribute("youtubeLinksList", youtubeLinks);
 		    request.setAttribute("publisherPic", publisherPic);
 			RequestDispatcher dispatcher = getServletContext()
 					.getRequestDispatcher("/views/index.jsp");
 			dispatcher.forward(request, response);	
 	    }
-
 		else{
             RequestDispatcher dispatcher = getServletContext()
             .getRequestDispatcher("/views/404.jsp");
             dispatcher.forward(request, response);        
 		    }
 		}
-
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 	}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="windows-1255">
+<script language= text/javascript src="jquery-1.11.0.min.js"></script>
+
+<script language="text/JavaScript">
+ $(document).ready(function(){
+	$.ajax({
+		type: "GET",
+		url: "http://www.wallflux.com/feed/534674899917897",
+		dataType: "xml",
+		success: xmlParser
+	});
+});
+ 
+function xmlPArser(xml){
+	$(xml).find("item").each(function(){
+	$('#container').append($this.find("description").text())
+});
+}
+</script>
+<title>Insert title here</title>
+</head>
+<body>
+<div id="container">
+</div>
+</body>
+</html>

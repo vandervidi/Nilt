@@ -22,15 +22,9 @@
 	
     <!-- Custom styles for this template -->
     <link href="../views/css/cover.css" rel="stylesheet">
-
-    <!-- Just for debugging purposes. Don't actually copy this line! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>    
+    
+   
 <%
 ArrayList<String> youtubeLinks=null;
 ArrayList<String> publisherPicLink=null;
@@ -75,8 +69,8 @@ firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 var player;
 function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
-    height: '360',
-    width: '640',
+    height: '720',
+    width: '1280',
     videoId: trackId[i],
     playerVars: {
         'iv_load_policy': 3,'autohide':1},
@@ -94,6 +88,7 @@ function onYouTubeIframeAPIReady() {
    changePublishersPic();
    loadInfo(trackId[i]);
    player.setVolume(100);
+   player.setPlaybackQuality('hd720');
  }
 
  function loadNextVideo() {
@@ -163,14 +158,98 @@ body.appendChild(gdata);
 
 var storeInfo = function (info) {
 title=info.data.title;
-document.getElementById("currTrackTitle").innerHTML=(i+1)+"/"+(playlistLimit)+" : "+title;
+document.getElementById("currTrackTitle").innerHTML = (i+1)+"/"+(playlistLimit)+" : "+title;
    console.log(title);
 };
 
 //function that changes th song publisher logo
 function changePublishersPic(){
-	 document.getElementById("publishersPic").src =publisherPic[i];
+	 document.getElementById("publishersPic").src = publisherPic[i];
 }
+
+//Twitter share poppup
+function twitter_click(width, height) {
+var leftPosition, topPosition;
+//Allow for borders.
+leftPosition = (window.screen.width / 2) - ((width / 2) + 10);
+//Allow for title and status bars.
+topPosition = (window.screen.height / 2) - ((height / 2) + 50);
+var windowFeatures = "status=no,height=" + height + ",width=" + width + ",resizable=yes,left=" + leftPosition + ",top=" + topPosition + ",screenX=" + leftPosition + ",screenY=" + topPosition + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no";
+u=location.href;
+t=document.title;
+window.open('https://twitter.com/intent/tweet?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer', windowFeatures);
+return false;
+}
+
+//function that pops a window for a Facebook share
+function fbs_click(width, height) {
+var leftPosition, topPosition;
+//Allow for borders.
+leftPosition = (window.screen.width / 2) - ((width / 2) + 10);
+//Allow for title and status bars.
+topPosition = (window.screen.height / 2) - ((height / 2) + 50);
+var windowFeatures = "status=no,height=" + height + ",width=" + width + ",resizable=yes,left=" + leftPosition + ",top=" + topPosition + ",screenX=" + leftPosition + ",screenY=" + topPosition + ",toolbar=no,menubar=no,scrollbars=no,location=no,directories=no";
+u=location.href;
+t=document.title;
+window.open('http://www.facebook.com/sharer.php?u='+encodeURIComponent(u)+'&t='+encodeURIComponent(t),'sharer', windowFeatures);
+return false;
+}
+
+$(function() {
+$("#shareOnFacebook").bind("mouseover",hoverEffectFacebook);
+$("#shareOnFacebook").bind("mouseleave",normalFacebook);
+
+$("#shareOnGooglePlus").bind("mouseover",hoverEffectGooglePlus);
+$("#shareOnGooglePlus").bind("mouseleave",normalGooglePlus);
+
+$("#shareOnTwitter").bind("mouseover",hoverEffectTwitter);
+$("#shareOnTwitter").bind("mouseleave",normalTwitter);
+});
+
+function hoverEffectFacebook(event)
+{
+$("#shareOnFacebook").animate({
+width: "130%",
+}, 100 );
+}
+
+function hoverEffectGooglePlus(event)
+{
+$("#shareOnGooglePlus").animate({
+width: "130%",
+}, 100 );
+}
+
+function hoverEffectTwitter(event)
+{
+$("#shareOnTwitter").animate({
+width: "130%",
+}, 100 );
+}
+
+function normalFacebook(event)
+{
+$("#shareOnFacebook").animate({
+width: "100%",
+}, 200 );
+}
+
+function normalGooglePlus(event)
+{
+$("#shareOnGooglePlus").animate({
+width: "100%",
+}, 200 );
+}
+
+function normalTwitter(event)
+{
+$("#shareOnTwitter").animate({
+width: "100%",
+}, 200 );
+}
+
+
+
 //Google analytics code
 var _gaq = _gaq || [];
 _gaq.push(['_setAccount', 'UA-48510324-1']);
@@ -308,28 +387,21 @@ _gaq.push(['_trackPageview']);
 </div>
 
 <!-- Modal end -->
-<!-- AddThis Smart Layers BEGIN -->
-<!-- Go to http://www.addthis.com/get/smart-layers to customize -->
-<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53230e4114f8a5ea"></script>
-<script type="text/javascript">
-  addthis.layers({
-    'theme' : 'transparent',
-    'share' : {
-      'position' : 'right',
-      'numPreferredServices' : 6
-    }, 
-    'follow' : {
-      'services' : [
-        {'service': 'facebook', 'id': 'groups/now.im.listening.to/'}
-      ]
-    }   
-  });
-</script>
-<!-- AddThis Smart Layers END -->
+<div id="sharePluginWrapper">
+			<div id="sharePluginTitle">Share</div>
+			
+			<a href="http://www.facebook.com/share.php?u=http://www.nowimlisteningto.com" onClick="return fbs_click(400, 300)" target="_blank">
+			<div id="shareOnFacebook"><img src="../views/images/facebook-48.png"></div></a>
+			
+			<a href="https://plus.google.com/share?url=http://www.nowimlisteningto.com"	onclick="javascript:window.open('https://plus.google.com/share?url=http://www.nowimlisteningto.com','','menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600'); return false;">
+			<div id="shareOnGooglePlus"><img src="../views/images/googleplus-48.png"></div></a>
+			
+			<a href="https://twitter.com/intent/tweet?text=Now+Im+Listening+To+-+Share+your+music&url=http%3A%2F%2Fwww.nowimlisteningto.com%2Fcontroller%2Fnilt%23"  onclick="javascript:window.open('https://twitter.com/intent/tweet?text=Now+Im+Listening+To+-+Share+your+music&url=http%3A%2F%2Fwww.nowimlisteningto.com%2Fcontroller%2Fnilt%23','','menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600'); return false;">
+			<div id="shareOnTwitter"><img src="../views/images/twitter-48.png"></div></a>
+		</div>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="../views/js/bootstrap.min.js"></script>
   </body>
 </html>
