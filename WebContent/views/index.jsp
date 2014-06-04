@@ -6,16 +6,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	<meta property="og:title" content="Now Im Listening To..."/> 
+	<meta property="og:title" content="Now i'm listening to"/> 
 	<link rel="shortcut icon" href="../views/images/favicon.ico" />
-	<meta property="og:description" content="Share music and listen to music shared by other people! Sometimes its just fun to listen to random music that is shared by others.Sharing music in this website is easy! Just join our facebook group - 'Now im listening to....' or visit our website:  www.NowImListeningTo.com and post a youtube music video link! Hit play on the playlist and enjoy the music!"/> 
+	<meta property="og:description" content="Now i'm listening to is based on its group on facebook. It's all about sharing and listening to music that other people listen to. Join us ,share your music and enjoy listening to music that other people shared."/> 
 	<meta property="og:type" content="website"/> 
 	<meta property="og:url" content="http://www.nowimlisteningto.com/controller/nilt"/>
-	<meta property="og:site_name" content="Now im listening to .."/>
+	<meta property="og:site_name" content="Now i'm listening to"/>
 	<meta property="og:image" content="http://i.imgur.com/ihTGpaJ.jpg"/>
     <meta name="google-site-verification" content="Q0zzoW5qfuknFK7qodXxS1sKX1GOawnwFoZb3Ya4mmw" />
     <meta name="author" content="Vidran Abdovich">
-    <title>Now Im Listening To - Share your music</title>
+    <title>Now i'm listening to - Share your music</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../views/css/bootstrap.min.css" rel="stylesheet">
@@ -269,7 +269,7 @@ _gaq.push(['_trackPageview']);
   
 <div class = "navbar navbar-inverse">
    <div class = "container">
-	 <a href = "../controller/nilt" class = "navbar-brand">Now Im Listening to..</a>
+	 <a href = "../controller/nilt" class = "navbar-brand">Now i'm listening to ...</a>
      <button class = "navbar-toggle" data-toggle = "collapse" data-target = ".navHeaderCollapse">
              <span class = "icon-bar"></span>
              <span class = "icon-bar"></span>
@@ -294,7 +294,7 @@ _gaq.push(['_trackPageview']);
 <div class = "navbar navbar-inverse navbar-fixed-bottom" style="padding-top:5px;">  
 	<div id="bottomNavConatainer">
 	   <div id="titleContainer">
-	   		<div id="publishersPicContainer" height="50" width="50" style="float: left;" ><img src="" id="publishersPic" alt="pp" style="padding-right:10px;"></div>
+	   		<div id="publishersPicContainer" height="50" width="50" style="float: left;" ><img src="" id="publishersPic" alt="" style="padding-right:10px;"></div>
 	   		<div id="currTrackTitle"></div>
 	   </div>  
 		   <div id="playerButtons">
