@@ -59,19 +59,12 @@ public class controller extends HttpServlet {
 /*    public controller() {
     	super();
     	try {
-			//initializing connection to the database
-			//Class.forName("com.mysql.jdbc.Driver");
-			//Connection properties
+			
+			Class.forName("com.mysql.jdbc.Driver");
+			Connection properties
 			connection = DriverManager.getConnection(
 					"jdbc:mysql://localhost/nilt", "root", "");
 
-			//Connection properties
-			Context ctx = new InitialContext();
-			DataSource ds = (DataSource) ctx.lookup("java:comp/env/jdbc/mydb");
-			connection = ds.getConnection();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
     }*/
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String str = request.getPathInfo();
@@ -165,12 +158,14 @@ public class controller extends HttpServlet {
 		    }  
 /*   This part is adding new videos to the database
   
-  Steps: 1. Create a temporary table of the existing one
-		 2. Clear the original table
+  Steps: 1. Create a temporary table that is a copy of the existing main table
+		 2. Clear the main table
 		 3. Insert the new videos to the original table
-		 4. Insert values from the temporary table
-		 5. Remove duplicates
-		 6. Delete the temporary table
+		 4. Insert values from the temporary table back to the main
+		 5. Drop the temporary table
+		 5. Create a new Temporary table
+		 6. Copy the main table to the temporary table and remove duplicate rows
+		 7. Drop the temporary table
 */
 	
 //Step 1
@@ -233,7 +228,7 @@ public class controller extends HttpServlet {
 				}
 				
 
-//Step 6
+//Step 5
 			try {
 				statement.executeUpdate("DROP TEMPORARY TABLE IF EXISTS tempkeys;");
 			} catch (SQLException e) {
@@ -247,7 +242,7 @@ public class controller extends HttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//step 7
+//step6
 			try {
 				statement = getConnection().createStatement();
 			} catch (SQLException e) {
@@ -299,7 +294,7 @@ public class controller extends HttpServlet {
 				e.printStackTrace();
 			}
 			
-//step  8
+//step  7
 			List <String> tmpValues = new ArrayList<String>();
 			List <String> tmpPics = new ArrayList<String>();
 			try {
