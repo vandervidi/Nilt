@@ -37,8 +37,12 @@ catch (NullPointerException e1)
 	System.out.println("Null pointer exception");	
 }
 %>
-<body>
-<script>
+
+<script type="text/javascript">
+$(window).load(function() {
+	$(".loader").fadeOut("slow");
+})
+
 var i=0;
 var title=null;
 var playlistLimit = <%out.print(youtubeLinks.size()); %>;
@@ -262,14 +266,23 @@ _gaq.push(['_trackPageview']);
 })();
 
 </script>
-   
+
+<body>  
+<div class="loader">
+	<div id="loadingContainer">
+		<span id="loaderHeader">Now I'm Listening To</span><Br><Br><Br>
+		<img src="../views/images/page-loader.GIF">
+		<br><br><h3>Creating Playlist...</h3>
+	</div>
+</div>
+ 
 <div class="video-container">
 	<div id="player"></div>
 </div>
   
 <div class = "navbar navbar-inverse">
    <div class = "container">
-	 <a href = "../controller/nilt" class = "navbar-brand">Now i'm listening to ...</a>
+	 <a href = "../controller/nilt" class = "navbar-brand">Now i'm listening to ..</a>
      <button class = "navbar-toggle" data-toggle = "collapse" data-target = ".navHeaderCollapse">
              <span class = "icon-bar"></span>
              <span class = "icon-bar"></span>
@@ -402,6 +415,7 @@ _gaq.push(['_trackPageview']);
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
+    <div id="spot-im-root"></div><script>!function(t,e,o){function p(){var t=e.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"==e.location.protocol?"https":"http")+":"+o,e.body.appendChild(t)}t.spotId="654b5f9e291c72457a9b91972d66a63e",t.spotName="lobby",t.allowDesktop=!0,t.allowMobile=!0,t.containerId="spot-im-root",p()}(window.SPOTIM={},document,"//www.spot.im/embed/scripts/launcher.js");</script>
     <script src="../views/js/bootstrap.min.js"></script>
   </body>
 </html>
