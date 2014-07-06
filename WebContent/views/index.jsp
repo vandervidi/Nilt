@@ -39,28 +39,40 @@ catch (NullPointerException e1)
 %>
 
 <script type="text/javascript">
+
 $(window).load(function() {
 	$(".loader").fadeOut("slow");
+	if(localStorage.getItem("update")==null){
+	 $('#myModal3').modal('show');
+	 localStorage['update'] = "seen";
+	}
 })
 
 var i=0;
 var title=null;
 var playlistLimit = <%out.print(youtubeLinks.size()); %>;
-var track = new Array();
-var trackId = new Array();
-var publisherPic = new Array();
+var trackInfo = [];
+var trackId = []; 
+var publisherPic = []; 
 //creating TrackId elements
 <% 
 try{
-	for(int j=0; j<youtubeLinks.size(); j++){
-	out.println("trackId["+j+"] =\""+youtubeLinks.get(j)+"\"");
-	out.println("publisherPic["+j+"] =\""+publisherPicLink.get(j)+"\"");}
+		for(int j=0; j<youtubeLinks.size(); j++){	
+		out.print("trackId["+j+"] =\""+youtubeLinks.get(j)+"\""+";");
+		out.print("publisherPic["+j+"] =\""+publisherPicLink.get(j)+"\""+";");
+		}
 	}
 catch(NullPointerException e2)
 {
 	System.out.println("Null pointer exception");
 }
 %>
+//making a new array of objects that will represent a track. Its ID and its publishers FB pic link.
+//Reason for creating this array is to prevent unsynchronization btween track id and publisher's picture when shuffeling.
+for(var j = 0 ; j<trackId.length ; j++){
+	trackInfo.push({id:trackId[j] , publisher: publisherPic[j]});
+}
+
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 
@@ -75,9 +87,9 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('player', {
     height: '720',
     width: '1280',
-    videoId: trackId[i],
+    videoId: trackInfo[i].id,
     playerVars: {
-        'iv_load_policy': 3,'autohide':1},
+        'iv_load_policy': 3,'autohide':1, 'controls':0, 'showinfo':0},
     events: {
       'onReady': onPlayerReady,
       'onStateChange': onPlayerStateChange
@@ -85,35 +97,35 @@ function onYouTubeIframeAPIReady() {
   });
 }
 
- // 4. The API will call this function when the video player is ready.
+ // 3. The API will call this function when the video player is ready.
  function onPlayerReady(event) {
 	//auto play
    //event.target.playVideo();
-   changePublishersPic();
-   loadInfo(trackId[i]);
+   loadInfo(trackInfo[i].id);
    player.setVolume(100);
    player.setPlaybackQuality('hd720');
+   changePublishersPic();
  }
 
  function loadNextVideo() {
   if(i<playlistLimit-1){
 	  i++;
 	  changePublishersPic();
-	  loadInfo(trackId[i]);
+	  loadInfo(trackInfo[i].id);
 	  $(".currTrackPlaying").text(i+1);
-	  var videoId=trackId[i];
+	  var videoId=trackInfo[i].id;
 	  //setting the video thumbnail as a background
-	  document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackId[i]; 
+	  document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackInfo[i].id; 
 	  if(player) { player.loadVideoById(videoId); }
 }
  else{
   i=0;
  	 changePublishersPic();
- 	 loadInfo(trackId[i]);
+ 	 loadInfo(trackInfo[i].id);
   	 $(".currTrackPlaying").text(i+1);
-  	 var videoId=trackId[i];
+  	 var videoId=trackInfo[i].id;
      //updating the download button with the current playing youtube video
-     document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackId[i]; 
+     document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackInfo[i].id; 
  	 if(player) { player.loadVideoById(videoId); }
 	}
 }
@@ -122,21 +134,21 @@ function loadPrevVideo() {
   if(i>0){
 	  i--;
 	  changePublishersPic();
-	  loadInfo(trackId[i]);
+	  loadInfo(trackInfo[i].id);
 	  $(".currTrackPlaying").text(i+1);
-	  var videoId=trackId[i];
+	  var videoId=trackInfo[i].id;
 	  //updating the download button with the current playing youtube video
-	 document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackId[i]; 
+	 document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackInfo[i].id; 
 	 if(player) { player.loadVideoById(videoId); }
   }
  else{
   i=playlistLimit-1;
   changePublishersPic();
-  loadInfo(trackId[i]);
+  loadInfo(trackInfo[i].id);
   $(".currTrackPlaying").text(i+1);
-  var videoId=trackId[i];
+  var videoId=trackInfo[i].id;
  //updating the download button with the current playing youtube video
- document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackId[i]; 
+ document.getElementById("downloadLink").href="http://youtubeinmp3.com/fetch/?video=http://www.youtube.com/watch?v="+trackInfo[i].id; 
  if(player) { player.loadVideoById(videoId); }
 	  }
 	  
@@ -168,7 +180,7 @@ document.getElementById("currTrackTitle").innerHTML = (i+1)+"/"+(playlistLimit)+
 
 //function that changes th song publisher logo
 function changePublishersPic(){
-	 document.getElementById("publishersPic").src = publisherPic[i];
+	 document.getElementById("publishersPic").src = trackInfo[i].publisher;
 }
 
 //Twitter share poppup
@@ -202,10 +214,8 @@ return false;
 $(function() {
 $("#shareOnFacebook").bind("mouseover",hoverEffectFacebook);
 $("#shareOnFacebook").bind("mouseleave",normalFacebook);
-
 $("#shareOnGooglePlus").bind("mouseover",hoverEffectGooglePlus);
 $("#shareOnGooglePlus").bind("mouseleave",normalGooglePlus);
-
 $("#shareOnTwitter").bind("mouseover",hoverEffectTwitter);
 $("#shareOnTwitter").bind("mouseleave",normalTwitter);
 });
@@ -253,6 +263,17 @@ width: "100%",
 }
 
 
+//A Fisher-Yates shuffle algorithm - used to shuffle the playlist.
+function shuffleArray(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
 
 //Google analytics code
 var _gaq = _gaq || [];
@@ -271,7 +292,7 @@ _gaq.push(['_trackPageview']);
 <div class="loader">
 	<div id="loadingContainer">
 		<span id="loaderHeader">Now I'm Listening To</span><Br><Br><Br>
-		<img src="../views/images/page-loader.GIF">
+		<img src="../views/images/loading-spinner.gif">
 		<br><br><h3>Creating Playlist...</h3>
 	</div>
 </div>
@@ -318,6 +339,8 @@ _gaq.push(['_trackPageview']);
 			    	<button type="button" class="btn btn-orange" style="margin-top:1px;">Download</button></a>
 					<button type="button" class="btn btn-success" onClick="loadNextVideo()" id="nextTrack" style="margin-top:1px;">
 					<span class="glyphicon glyphicon-forward"></span></button> 
+					<button type="button" class="btn btn-success" onClick="trackInfo = shuffleArray(trackInfo);loadNextVideo()" id="shuffle" style="margin-top:1px;">
+					<span class="glyphicon glyphicon-random"></span></button> 
 				</div> 
 			</div>
 	</div>                         
@@ -350,13 +373,13 @@ _gaq.push(['_trackPageview']);
 				<br> It works on some devices. Im still working on it and hope to sort that out soon. You could try downloading other browsers like chrome, opera, and etc.. It might sort the problem.
 				</ul>
 				<br><br>
-				<div class="hidden-xs">
-				<span style="color:#BEF781;"><strong>This is my visitors map:</strong></span>
-				  <div style="text-align: center; ">
-				     <iframe  marginwidth="0"   frameborder="0"  marginheight="0" width="550" height="350" src="http://www.embeddedanalytics.com/reports/displayreport?reportcode=rtUh2LQvas&chckcode=gaKdkG4BY5kwfk13PlOICJ" type="text/html"  scrolling="no"></iframe>
-				     <br><br>
-				  </div>
-				</div>
+					<div class="hidden-xs">
+					<span style="color:#BEF781;"><strong>This is my visitors map:</strong></span>
+					  <div style="text-align: center; ">
+					     <iframe  marginwidth="0"   frameborder="0"  marginheight="0" width="550" height="350" src="http://www.embeddedanalytics.com/reports/displayreport?reportcode=rtUh2LQvas&chckcode=gaKdkG4BY5kwfk13PlOICJ" type="text/html"  scrolling="no"></iframe>
+					     <br><br>
+					  </div>
+					</div>
 			  </div>
       </div>
       <div class="modal-footer">
@@ -365,9 +388,6 @@ _gaq.push(['_trackPageview']);
     </div>
   </div>
 </div>
-
-    
-
 <!-- Modal end -->
 
 <!-- Contact Modal -->
@@ -381,16 +401,37 @@ _gaq.push(['_trackPageview']);
       <div class="modal-body">
       
 			  <div style="background-color:#202020;text-align:center; padding-left:5px;padding-right:5px;">
-			  <span style="color:#BEF781;">Via Facebook:</span>
-				<!-- Facebook Badge START --><span style="font-family: &quot;lucida grande&quot;,tahoma,verdana,arial,sans-serif; font-size: 11px; line-height: 16px; font-variant: normal; font-style: normal; font-weight: normal; color: #555555; text-decoration: none;"></span><br/><a href="https://www.facebook.com/Vidran" target="_TOP" title="Vidran Abdovich"><img src="https://badge.facebook.com/badge/1119083452.1337.1958078608.png" style="border: 0px;" alt="facebook badge"/></a><!-- Facebook Badge END -->
-				<br>
-				<span style="color:#BEF781;">Via Google+:</span><br>
-				<!-- Place this tag in your head or just before your close body tag. -->
-				<script type="text/javascript" src="https://apis.google.com/js/platform.js"></script>
+					Vandervidi@gmail.com
+			 </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal end -->
 
-			<!-- Place this tag where you want the widget to render. -->
-			<div class="g-person" data-width="320" data-href="//plus.google.com/u/0/100699221861245624678" data-layout="landscape" data-rel="author"></div>
-			</div>
+<!-- New feature popup -->
+<div class="modal fade" id="myModal3" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel">A new feature is now available!</h4>
+      </div>
+      <div class="modal-body">
+      
+			  <div style="background-color:#202020;text-align:left; padding-left:5px;padding-right:5px;">
+			  Since the playlist is stored in a database, it constantly grows so i thought that a shuffle button would come in handy.
+			  A shuffle button is now available in the playlist control buttons. It looks like this: 
+			  <button type="button" class="btn btn-success" style="margin-top:1px;">
+			  <span class="glyphicon glyphicon-random"></span></button> 
+			  <br><br> What is a shuffle button?
+			  <p>Shuffle randomly selects songs from the playlist to play in no particular order. 
+			  It's a great way to be surprised by the next song!</p>
+			  
+			  </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
@@ -412,10 +453,8 @@ _gaq.push(['_trackPageview']);
 			<a href="https://twitter.com/intent/tweet?text=Now+Im+Listening+To+-+Share+your+music&url=http%3A%2F%2Fwww.nowimlisteningto.com%2Fcontroller%2Fnilt%23"  onclick="javascript:window.open('https://twitter.com/intent/tweet?text=Now+Im+Listening+To+-+Share+your+music&url=http%3A%2F%2Fwww.nowimlisteningto.com%2Fcontroller%2Fnilt%23','','menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600'); return false;">
 			<div id="shareOnTwitter"><img src="../views/images/twitter-48.png"></div></a>
 		</div>
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <div id="spot-im-root"></div><script>!function(t,e,o){function p(){var t=e.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"==e.location.protocol?"https":"http")+":"+o,e.body.appendChild(t)}t.spotId="654b5f9e291c72457a9b91972d66a63e",t.spotName="lobby",t.allowDesktop=!0,t.allowMobile=!0,t.containerId="spot-im-root",p()}(window.SPOTIM={},document,"//www.spot.im/embed/scripts/launcher.js");</script>
+		
+    <!-- Bootstrap core JavaScript-->
     <script src="../views/js/bootstrap.min.js"></script>
   </body>
 </html>

@@ -15,6 +15,7 @@ import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,16 +28,16 @@ import javax.sql.DataSource;
 public class controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	static Connection connection = null;
-	
+
 	
 	public static Connection getConnection() {
-        if (connection == null){
 	        try {
 	        	//Class.forName("com.mysql.jdbc.Driver");
-	        	//connection = DriverManager.getConnection("jdbc:mysql://localhost/tripcompany", "jaja", "gaga");
-                /*Statement statement = connection.createStatement();*/
+				//connection = DriverManager.getConnection("jdbc:mysql://shenkar.info/nilt", "vandervidi", "nilttr");
+			
 
 	        	 //for online
+
 	        	Context ctx = new InitialContext();
 	        	DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
 	        	connection = ds.getConnection();
@@ -44,51 +45,46 @@ public class controller extends HttpServlet {
 	        catch (Exception e) {
 	            e.printStackTrace();
 	        }
-        }
+       
         return connection;
     }
-
+	
+	
     public controller() {
         super();
-        System.out.println("controller constructor");
-        connection = getConnection();
+        connection = getConnection();	
     }
 	
 	
-	
-/*    public controller() {
-    	super();
-    	try {
-			
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection properties
-			connection = DriverManager.getConnection(
-					"jdbc:mysql://localhost/nilt", "root", "");
-
-    }*/
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String str = request.getPathInfo();
 		int indicator=0;
 		String[] parts; 
 		if (str.equals("/nilt")){
-	    	Statement statement = null;
-			try {
-				statement = getConnection().createStatement();
-			} catch (SQLException e3) {
+			 try {
+				if (connection!= null && connection.isClosed()){
+				        
+				        	//Class.forName("com.mysql.jdbc.Driver");
+							//connection = DriverManager.getConnection("jdbc:mysql://shenkar.info/nilt", "vandervidi", "nilttr");
+					Context ctx = new InitialContext();
+		        	DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
+		        	connection = ds.getConnection();
+				
+				}
+			} catch (SQLException | NamingException e4) {
 				// TODO Auto-generated catch block
-				e3.printStackTrace();
+				e4.printStackTrace();
 			}
-			
-			
-			String createTable = "CREATE TABLE IF NOT EXISTS ytkeys ("
-				    + "id INT(64) NOT NULL AUTO_INCREMENT,"
-				    + "videokeys VARCHAR(11),"
-				    + "publisherpic VARCHAR(100),"
-				    + "PRIMARY KEY(id)"
-				    + ")";
-			
+			 	
 			try {
-				statement = connection.createStatement();
+				String createTable = "CREATE TABLE IF NOT EXISTS ytkeys ("
+					    //+ "id INT(64) NOT NULL AUTO_INCREMENT,"
+					    + " videokeys VARCHAR(11),"
+					    + " publisherpic VARCHAR(100)"
+					   // + " PRIMARY KEY(id)"
+					    + ") ;";
+				
+				Statement statement = connection.createStatement();
 				statement.executeUpdate(createTable);
 				statement.close();
 			} catch (SQLException e2) {
@@ -159,8 +155,8 @@ public class controller extends HttpServlet {
 /*   This part is adding new videos to the database
   
   Steps: 1. Create a temporary table that is a copy of the existing main table
-		 2. Clear the main table
-		 3. Insert the new videos to the original table
+		 2. Clear everything from the main table
+		 3. Insert the new youtube keys to the original table
 		 4. Insert values from the temporary table back to the main
 		 5. Drop the temporary table
 		 5. Create a new Temporary table
@@ -170,31 +166,24 @@ public class controller extends HttpServlet {
 	
 //Step 1
 		    try {
-				statement = getConnection().createStatement();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			try {
+		    	Statement statement = connection.createStatement();
 				statement.executeUpdate(
-						"CREATE temporary TABLE tempkeys AS "  
-						+"(SELECT videokeys, publisherpic FROM ytkeys);"
-						);
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
+						" CREATE TABLE IF NOT EXISTS `tempkeys` AS "  
+						+" (SELECT `videokeys`,`publisherpic` FROM `ytkeys`);"
+						);			
 //Step 2
-			try {
-				statement.executeUpdate("TRUNCATE TABLE ytkeys;");
+				statement.executeUpdate("TRUNCATE TABLE `ytkeys`; ");
 				statement.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+
 //Step 3
 			//Inserting into the empty 'index file' table all rows from the temporary table
 			for(int i=0; i<youtubeLinks.size(); i++){
 			                try {
-								PreparedStatement prepstate =getConnection().prepareStatement
-						                ("INSERT INTO ytkeys (`videokeys`,`publisherpic`) VALUES (?,?)");
+								PreparedStatement prepstate = connection.prepareStatement
+						                ("INSERT INTO `ytkeys` (`videokeys`,`publisherpic`) VALUES (?,?);");
 						                prepstate.setString(1, youtubeLinks.get(i));
 						                prepstate.setString(2, publisherPic.get(i));
 						                prepstate.execute();
@@ -207,8 +196,8 @@ public class controller extends HttpServlet {
 //Step 4
 			
 				try {
-					statement = getConnection().createStatement();
-					ResultSet rs = statement.executeQuery("SELECT * FROM tempkeys;");
+					Statement statement = connection.createStatement();
+					ResultSet rs = statement.executeQuery("SELECT `videokeys`,`publisherpic` FROM `tempkeys`; ");
 					List <String> tmpValues = new ArrayList<String>();
 					List <String> tmpPics = new ArrayList<String>();
 					while(rs.next()){
@@ -217,96 +206,72 @@ public class controller extends HttpServlet {
 						tmpValues.add(tmpValue);
 						tmpPics.add(tmpPic);
 					}
+					statement.close();
 				
 					for (int i=0; i<tmpValues.size() ; i++){
-						String query = "INSERT INTO ytkeys (videokeys , publisherpic) VALUES ('"+ tmpValues.get(i) +"' , '"+ tmpPics.get(i) +"');";
-						statement.executeUpdate(query);
+						PreparedStatement prepstate = connection.prepareStatement
+				                ("INSERT INTO `ytkeys` (`videokeys` , `publisherpic`) VALUES (?,?);");
+				                prepstate.setString(1, tmpValues.get(i));
+				                prepstate.setString(2, tmpPics.get(i));
+				                prepstate.execute();
+				                prepstate.close();
 					}
+//Step 5				
+				statement = connection.createStatement();
+				statement.executeUpdate("DROP TABLE IF EXISTS `tempkeys`; ");
+				statement.close();
+				
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
 
-//Step 5
-			try {
-				statement.executeUpdate("DROP TEMPORARY TABLE IF EXISTS tempkeys;");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			try {
-				statement.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 //step6
 			try {
-				statement = getConnection().createStatement();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				Statement statement = connection.createStatement();
 			//Creating a temporary table that will store a table without duplicate rows.
-			try {
+			
 				statement.executeUpdate(
-						"CREATE temporary TABLE tempkeys AS "  
-						+"(SELECT videokeys, publisherpic FROM ytkeys) "
-						+"group by videokeys,publisherpic ORDER BY NULL;"
+						" CREATE TABLE IF NOT EXISTS `tempkeys` AS "  
+						+" SELECT `videokeys`, `publisherpic` FROM `ytkeys` "
+						+" GROUP BY `videokeys`,`publisherpic` ORDER BY NULL;"
 						);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//Clearing completely the 'index File' table
-			try {
-				statement.executeUpdate("TRUNCATE TABLE ytkeys;");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			//Clearing completely the 'index File' table	
+			statement.executeUpdate("TRUNCATE TABLE `ytkeys`;");
 			
 			//Inserting into the empty 'index file' table all rows from the temporary table
-			try {
-				statement.executeUpdate(
-						"INSERT INTO ytkeys (`videokeys`,`publisherpic`) "
-						+"		SELECT videokeys,publisherpic "
-						+"		FROM tempkeys ;"
+			statement.executeUpdate(
+						" INSERT INTO `ytkeys` (`videokeys`,`publisherpic`) "
+						+" SELECT `videokeys`,`publisherpic` "
+						+" FROM `tempkeys`;"
 						);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			//Deleting the temporary table we used
-			try {
-				statement.executeUpdate("DROP TEMPORARY TABLE IF EXISTS tempkeys;");
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
+				statement.executeUpdate("DROP TABLE IF EXISTS `tempkeys`;");
 				statement.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 //step  7
 			List <String> tmpValues = new ArrayList<String>();
 			List <String> tmpPics = new ArrayList<String>();
 			try {
-				statement = getConnection().createStatement();
-				ResultSet rs = statement.executeQuery("SELECT * FROM ytkeys;");
+				Statement statement = connection.createStatement();
+				ResultSet rs = statement.executeQuery("SELECT * FROM `ytkeys`;");
 				
 				while(rs.next()){
-					String tmpValue = rs.getString("videokeys");
-					String tmpPic = rs.getString("publisherpic");
-					tmpValues.add(tmpValue);
-					tmpPics.add(tmpPic);
+					tmpValues.add(rs.getString("videokeys"));
+					tmpPics.add(rs.getString("publisherpic"));
 				}
+			statement.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			try {
+				connection.close();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
