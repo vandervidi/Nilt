@@ -64,10 +64,15 @@ public class controller extends HttpServlet {
 			 try {
 				if (connection!= null && connection.isClosed()){
 				        
-				        	//Class.forName("com.mysql.jdbc.Driver");
+				        	try {
+								Class.forName("com.mysql.jdbc.Driver");
+							} catch (ClassNotFoundException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							//connection = DriverManager.getConnection("jdbc:mysql://shenkar.info/nilt", "vandervidi", "nilttr");
 					Context ctx = new InitialContext();
-		        	DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
+					DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
 		        	connection = ds.getConnection();
 				
 				}

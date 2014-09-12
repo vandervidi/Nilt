@@ -8,18 +8,8 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/antlr-2.7.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/commons-collections-3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/dom4j-1.6.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/hibernate3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/javassist-3.9.0.GA.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/jta-1.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/log4j-1.2.16.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/mysql-connector-java-5.1.13-bin.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/slf4j-api-1.5.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/lib/slf4j-log4j12-1.5.6.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/jsp-api.jar"/>
-	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/servlet-api.jar"/>
+	<classpathentry kind="lib" path="D:/apache-tomcat-7.0.54/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="D:/apache-tomcat-7.0.54/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/vandervidi/Desktop/mysql-connector-java-5.1.13-bin.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
