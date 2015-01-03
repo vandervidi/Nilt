@@ -32,15 +32,15 @@ public class controller extends HttpServlet {
 	
 	public static Connection getConnection() {
 	        try {
-	        	//Class.forName("com.mysql.jdbc.Driver");
-				//connection = DriverManager.getConnection("jdbc:mysql://shenkar.info/nilt", "vandervidi", "nilttr");
+	        	Class.forName("com.mysql.jdbc.Driver");
+				connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1/nilt", "root", "");
 			
 
-	        	 //for online
+//Cloudbees database
 
-	        	Context ctx = new InitialContext();
-	        	DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
-	        	connection = ds.getConnection();
+//	        	Context ctx = new InitialContext();
+//	        	DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
+//	        	connection = ds.getConnection();
 	        }
 	        catch (Exception e) {
 	            e.printStackTrace();
@@ -70,13 +70,15 @@ public class controller extends HttpServlet {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
-							//connection = DriverManager.getConnection("jdbc:mysql://shenkar.info/nilt", "vandervidi", "nilttr");
-					Context ctx = new InitialContext();
-					DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
-		        	connection = ds.getConnection();
+							connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1/nilt", "root", "");
+
+// Cloudbees - database
+//					Context ctx = new InitialContext();
+//					DataSource ds = (DataSource)ctx.lookup("java:comp/env/jdbc/mydb");
+//		        	connection = ds.getConnection();
 				
 				}
-			} catch (SQLException | NamingException e4) {
+			} catch (SQLException e4) {
 				// TODO Auto-generated catch block
 				e4.printStackTrace();
 			}
@@ -110,7 +112,7 @@ public class controller extends HttpServlet {
 		      String inputLine;
 		      while ((inputLine = in.readLine()) != null) {
 		    	  //if the link is a SoundCloud link then ignore it.
-		    	  if (inputLine.contains(" <title><![CDATA[http") && !inputLine.contains("soundcloud"))
+		    	  if (inputLine.contains(" <title><![CDATA[http") && (inputLine.contains("youtu.be") || inputLine.contains("youtube.com")) && !inputLine.contains("feature=player"))
 		    	  {
 		    		  youtubeLinks.add(inputLine);
 		    		  indicator=1;
@@ -143,13 +145,14 @@ public class controller extends HttpServlet {
 					
 					//removing special symbols from the URL, (=,&,#,?) and isolating uniqe video id.
 					
-					if(strTemp.contains("youtu.be/")){
-						parts = strTemp.split("be/");
-						strTemp = parts[1];
-					}
-					if(strTemp.contains("youtube")){
+					if(strTemp.contains("youtube.com")){
 						parts = strTemp.split("v=");
 						strTemp = parts[1];
+					}else{
+						if(strTemp.contains("youtu.be/")){
+							parts = strTemp.split("be/");
+							strTemp = parts[1];
+						}
 					}
 					if (strTemp.length()>11){
 						strTemp = strTemp.substring(0,11);
@@ -231,7 +234,7 @@ public class controller extends HttpServlet {
 					e1.printStackTrace();
 				}
 
-//step6
+//step 6
 			try {
 				Statement statement = connection.createStatement();
 			//Creating a temporary table that will store a table without duplicate rows.

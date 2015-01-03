@@ -32,7 +32,7 @@
 <body>
 	<div class=loader>
 		<div id=loadingContainer>
-			<img src="../views/images/niltlogo.png"><span id=loaderHeader>Now I'm Listening To</span><Br>
+			<img src="../views/images/niltlogo.png" style="width: 60px;"><span id=loaderHeader>  Now I'm Listening To</span><Br>
 			<Br>
 			<Br>
 			<img src="../views/images/loading-spinner.gif"><br>
